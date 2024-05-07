@@ -1,3 +1,13 @@
+This fork adds a -years flag to specify the validity period.
+
+Similar with [this PR](https://github.com/FiloSottile/mkcert/pull/513), but can generate root CA for longer than 10 years. If you have used mkcert before, you may need to remove old root CA files (e.g. `~/.local/share/mkcert/rootCA.pem` and `~/.local/share/mkcert/rootCA-key.pem` on Linux) under the CAROOT path before generating a certificate longer than 10 years for the first time.
+
+Example usage (generate a certificate valid for 100 years!):
+
+```
+mkcert -years 100 -key-file key.pem -cert-file cert.pem example.com *.example.com
+```
+
 # mkcert
 
 mkcert is a simple tool for making locally-trusted development certificates. It requires no configuration.
