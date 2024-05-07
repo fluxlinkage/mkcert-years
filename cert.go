@@ -60,6 +60,10 @@ func (m *mkcert) makeCert(hosts []string) {
 	// 825 days, the limit that macOS/iOS apply to all certificates,
 	// including custom roots. See https://support.apple.com/en-us/HT210176.
 	expiration := time.Now().AddDate(2, 3, 0)
+	if m.years > 0 {
+		expiration = time.Now().AddDate(m.years, 0, 0)
+	}
+
 
 	tpl := &x509.Certificate{
 		SerialNumber: randomSerialNumber(),
@@ -226,6 +230,9 @@ func (m *mkcert) makeCertFromCSR() {
 	fatalIfErr(csr.CheckSignature(), "invalid CSR signature")
 
 	expiration := time.Now().AddDate(2, 3, 0)
+	if m.years > 0 {
+		expiration = time.Now().AddDate(m.years, 0, 0)
+	}
 	tpl := &x509.Certificate{
 		SerialNumber:    randomSerialNumber(),
 		Subject:         csr.Subject,
@@ -324,6 +331,11 @@ func (m *mkcert) newCA() {
 
 	skid := sha1.Sum(spki.SubjectPublicKey.Bytes)
 
+	expiration := time.Now().AddDate(10, 0, 0)
+	if m.years > 10 {
+		expiration = time.Now().AddDate(m.years, 0, 0)
+	}
+
 	tpl := &x509.Certificate{
 		SerialNumber: randomSerialNumber(),
 		Subject: pkix.Name{
@@ -337,7 +349,7 @@ func (m *mkcert) newCA() {
 		},
 		SubjectKeyId: skid[:],
 
-		NotAfter:  time.Now().AddDate(10, 0, 0),
+		NotAfter:  expiration,
 		NotBefore: time.Now(),
 
 		KeyUsage: x509.KeyUsageCertSign,

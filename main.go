@@ -67,6 +67,9 @@ const advancedUsage = `Advanced options:
 
 	-CAROOT
 	    Print the CA certificate and key storage location.
+	    
+	-years Y
+	    Generate a certificate valid for Y years.
 
 	$CAROOT (environment variable)
 	    Set the CA certificate and key storage location. (This allows
@@ -103,6 +106,7 @@ func main() {
 		keyFileFlag   = flag.String("key-file", "", "")
 		p12FileFlag   = flag.String("p12-file", "", "")
 		versionFlag   = flag.Bool("version", false, "")
+		yearsFlag   = flag.Int("years", 0, "")
 	)
 	flag.Usage = func() {
 		fmt.Fprint(flag.CommandLine.Output(), shortUsage)
@@ -145,7 +149,7 @@ func main() {
 	(&mkcert{
 		installMode: *installFlag, uninstallMode: *uninstallFlag, csrPath: *csrFlag,
 		pkcs12: *pkcs12Flag, ecdsa: *ecdsaFlag, client: *clientFlag,
-		certFile: *certFileFlag, keyFile: *keyFileFlag, p12File: *p12FileFlag,
+		certFile: *certFileFlag, keyFile: *keyFileFlag, p12File: *p12FileFlag, years: *yearsFlag,
 	}).Run(flag.Args())
 }
 
@@ -166,6 +170,7 @@ type mkcert struct {
 	// will keep failing until the next execution. TODO: maybe execve?
 	// https://github.com/golang/go/issues/24540 (thanks, myself)
 	ignoreCheckFailure bool
+	years int
 }
 
 func (m *mkcert) Run(args []string) {
